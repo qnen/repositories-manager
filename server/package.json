@@ -1,0 +1,20 @@
+{
+  "name": "github-repositories-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "mongoose": "^6.1.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
