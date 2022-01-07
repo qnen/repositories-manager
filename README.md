@@ -5,8 +5,11 @@ Um gerenciador de repositórios do github.
 `npm i -g nodemon`
 
 ### Instalação
+`cd server`
+`npm install`
+`cd ../client`
 `npm install`
 
 ### Para rodar o projeto
-`cd client`
+#### No diretório Client:
 `npm run start`
