@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 
 import api from "../../services/api";
@@ -8,21 +8,21 @@ import "./styles.css";
 
 export default function Home() {
    const [repositories, setRepositories] = useState([]);
-   const [url, setUrl] = useState('');
-   const [repoName, setRepoName] = useState('');
+   const [url, setUrl] = useState("");
+   const [repoName, setRepoName] = useState("");
    const navigate = useNavigate();
 
    const userId = localStorage.getItem("userId");
 
-   if(userId === undefined || userId === null) {
-      navigate('/');
+   if (userId === undefined || userId === null) {
+      navigate("/");
    }
 
    useEffect(() => {
       api.get("repositories", {
          headers: {
             Authorization: userId,
-         }
+         },
       }).then((response) => {
          setRepositories(response.data);
       });
@@ -33,59 +33,69 @@ export default function Home() {
          await api.delete(`repositories/${id}`, {
             headers: {
                Authorization: userId,
-            }
+            },
          });
-         setRepositories(repositories.filter(repository => repository._id !== id));
+         setRepositories(
+            repositories.filter((repository) => repository._id !== id)
+         );
       } catch (err) {
-         alert('Erro ao deletar repositório, tente novamente.');
+         alert("Erro ao deletar repositório, tente novamente.");
       }
    }
 
    function handleLogout() {
       localStorage.clear();
 
-      navigate('/');
+      navigate("/");
    }
 
    async function handleNewRepository(e) {
       e.preventDefault();
 
       try {
-         await api.post('repositories', {url}, {
-            headers: {
-               Authorization: userId,
+         await api.post(
+            "repositories",
+            { url },
+            {
+               headers: {
+                  Authorization: userId,
+               },
             }
-         })
+         );
 
          api.get("repositories", {
             headers: {
                Authorization: userId,
-            }
+            },
          }).then((response) => {
             setRepositories(response.data);
-            setUrl('');
+            setUrl("");
          });
       } catch (err) {
-         alert('Erro ao cadastrar novo repositório, tente novamente.');
+         alert("Erro ao cadastrar novo repositório, tente novamente.");
       }
-
    }
-   
+
    async function handleRepositorySearch(e) {
       e.preventDefault();
 
       try {
-         await api.post('search', {repoName}, {
-            headers: {
-               Authorization: userId,
-            }
-         }).then((response) => {
-            setRepositories(response.data);
-         });
+         await api
+            .post(
+               "search",
+               { repoName },
+               {
+                  headers: {
+                     Authorization: userId,
+                  },
+               }
+            )
+            .then((response) => {
+               setRepositories(response.data);
+            });
       } catch (err) {
-         alert('Erro ao cadastrar novo repositório, tente novamente.');
+         alert("Erro ao cadastrar novo repositório, tente novamente.");
       }
-
    }
 
    return (
@@ -93,19 +103,23 @@ export default function Home() {
          <header>
             <h1 className="header-title">Gerenciador de Repositórios</h1>
             <nav>
-               <button onClick={handleLogout} className="button">Sair</button>
+               <button onClick={handleLogout} className="button">
+                  Sair
+               </button>
             </nav>
          </header>
          <section className="form-search">
             <form onSubmit={handleRepositorySearch}>
                <h3>Procurar</h3>
-               <input 
-                  type="text" 
+               <input
+                  type="text"
                   placeholder="Nome do repositório..."
                   value={repoName}
-                  onChange={e => setRepoName(e.target.value)}
+                  onChange={(e) => setRepoName(e.target.value)}
                />
-               <button className="button" type="submit">Procurar</button>
+               <button className="button" type="submit">
+                  Procurar
+               </button>
             </form>
          </section>
          <main className="list-repo">
@@ -115,8 +129,17 @@ export default function Home() {
                   {repositories.map((repository) => (
                      <li key={repository._id}>
                         <p>{repository.author}</p>
-                        <p>{repository.repository}</p>
-                        <button onClick={() => handleDeleteRepositoy(repository._id)} type="button">
+                        <a
+                           href={repository.url}
+                           target="_blank"
+                           rel="noreferrer"
+                        >
+                           <p>{repository.repository}</p>
+                        </a>
+                        <button
+                           onClick={() => handleDeleteRepositoy(repository._id)}
+                           type="button"
+                        >
                            <FiX size={25} color="#FFF" />
                         </button>
                      </li>
@@ -127,15 +150,17 @@ export default function Home() {
          <footer className="form-create-repo">
             <form onSubmit={handleNewRepository}>
                <h3>Novo Repo</h3>
-               <input 
+               <input
                   type="text"
                   placeholder="URL do repositório..."
                   value={url}
-                  onChange={e => {
+                  onChange={(e) => {
                      setUrl(e.target.value);
                   }}
                />
-               <button className="button" type="submit">Adicionar</button>
+               <button className="button" type="submit">
+                  Adicionar
+               </button>
             </form>
          </footer>
       </div>

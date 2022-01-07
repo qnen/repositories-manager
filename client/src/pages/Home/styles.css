@@ -100,7 +100,7 @@
    border-bottom: 4px solid rgb(93, 93, 93);
 }
 
-.repos-container main.list-repo div.list p:first-child {
+.repos-container main.list-repo div.list p {
    color: rgb(131, 131, 131);
    font-weight: 500;
    text-align: center;
@@ -109,15 +109,19 @@
    grid-row: 1;
 }
 
-.repos-container main.list-repo div.list p:nth-child(2) {
+.repos-container main.list-repo div.list a {
+   text-decoration: none;
+
+   grid-column: 1;
+   grid-row: 2;
+}
+
+.repos-container main.list-repo div.list a p {
    color: rgb(190, 190, 190);
    font-weight: 600;
    text-align: center;
    font-size: 16px;
    margin-top: 2px;
-   
-   grid-column: 1;
-   grid-row: 2;
 }
 
 .repos-container main.list-repo div.list ul button {
