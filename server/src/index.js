@@ -1,10 +1,13 @@
 import express from 'express';
+import cors from 'cors';
 import mongoConnect from './database/connection.js';
 import routes from './routes.js';
 
 mongoConnect();
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 

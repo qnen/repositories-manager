@@ -1,9 +1,18 @@
 import mongoose from 'mongoose';
 
 const repositorySchema = new mongoose.Schema({
-   author: String,
-   repository: String,
-   url: String
+   author: {
+      type: String,
+      require: true
+   },
+   repository: {
+      type: String,
+      require: true
+   },
+   url: {
+      type: String,
+      require: true
+   },
 }, {
    versionKey: false
 });
