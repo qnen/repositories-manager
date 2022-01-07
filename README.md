@@ -5,8 +5,10 @@ Um gerenciador de repositórios do github.
 `npm i -g nodemon`
 
 ### Instalação
+#### No diretório Server:
 `cd server`
 `npm install`
+#### No diretório Client:
 `cd ../client`
 `npm install`
 
