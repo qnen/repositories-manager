@@ -24,7 +24,7 @@ export default class RepositoryController {
       })
 
       if(repositoryExists !== null) {
-         return response.status(406).json({ msg: 'Repositório já cadastrado.' })
+         return response.json({ msg: 'Repositório já cadastrado.' })
       } 
       const createdRepository = await Repository.create({
          author: `${repository.author}`,

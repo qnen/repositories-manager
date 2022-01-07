@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FiX } from "react-icons/fi";
 
@@ -7,6 +8,24 @@ import api from "../../services/api";
 import "./styles.css";
 
 export default function Home() {
+   const [dialog, setDialog] = useState({
+      show: false,
+      id: null,
+      name: null,
+   });
+   const handleClose = () =>
+      setDialog({
+         show: false,
+         id: null,
+         name: null,
+      });
+   const handleDialog = (id, repository) => {
+      setDialog({
+         show: true,
+         id: id,
+         name: repository,
+      });
+   };
    const [repositories, setRepositories] = useState([]);
    const [url, setUrl] = useState("");
    const [repoName, setRepoName] = useState("");
@@ -28,18 +47,21 @@ export default function Home() {
       });
    }, [userId]);
 
-   async function handleDeleteRepositoy(id) {
-      try {
-         await api.delete(`repositories/${id}`, {
-            headers: {
-               Authorization: userId,
-            },
-         });
-         setRepositories(
-            repositories.filter((repository) => repository._id !== id)
-         );
-      } catch (err) {
-         alert("Erro ao deletar repositório, tente novamente.");
+   async function handleDeleteRepositoy() {
+      if (dialog.show && dialog.id) {
+         try {
+            await api.delete(`repositories/${dialog.id}`, {
+               headers: {
+                  Authorization: userId,
+               },
+            });
+            setRepositories(
+               repositories.filter((repository) => repository._id !== dialog.id)
+            );
+            handleClose();
+         } catch (err) {
+            alert("Erro ao deletar repositório, tente novamente.");
+         }
       }
    }
 
@@ -53,7 +75,7 @@ export default function Home() {
       e.preventDefault();
 
       try {
-         await api.post(
+         const response = await api.post(
             "repositories",
             { url },
             {
@@ -61,17 +83,21 @@ export default function Home() {
                   Authorization: userId,
                },
             }
-         );
-
-         api.get("repositories", {
-            headers: {
-               Authorization: userId,
-            },
-         }).then((response) => {
-            setRepositories(response.data);
-            setUrl("");
-         });
+            );
+            if(response.data.msg === "Repositório já cadastrado.") {
+               alert(response.data.msg);
+            } else {
+               api.get("repositories", {
+                  headers: {
+                     Authorization: userId,
+                  },
+               }).then((response) => {
+                  setRepositories(response.data);
+                  setUrl("");
+               });
+            }
       } catch (err) {
+         console.log(err);
          alert("Erro ao cadastrar novo repositório, tente novamente.");
       }
    }
@@ -137,7 +163,12 @@ export default function Home() {
                            <p>{repository.repository}</p>
                         </a>
                         <button
-                           onClick={() => handleDeleteRepositoy(repository._id)}
+                           onClick={() =>
+                              handleDialog(
+                                 repository._id,
+                                 repository.repository
+                              )
+                           }
                            type="button"
                         >
                            <FiX size={25} color="#FFF" />
@@ -163,6 +194,27 @@ export default function Home() {
                </button>
             </form>
          </footer>
+
+         <Modal show={dialog.show} onHide={handleClose}>
+            <Modal.Header closeButton>
+               <Modal.Title>Não será possível voltar atrás...</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+               Tem certeza que deseja <strong>Excluir Permanentemente</strong> o
+               repositório <strong>"{dialog.name}"</strong>?
+            </Modal.Body>
+            <Modal.Footer>
+               <Button variant="secondary" onClick={handleClose}>
+                  Cancelar
+               </Button>
+               <Button
+                  variant="danger"
+                  onClick={handleDeleteRepositoy}
+               >
+                  Excluir Permanentemente
+               </Button>
+            </Modal.Footer>
+         </Modal>
       </div>
    );
 }
